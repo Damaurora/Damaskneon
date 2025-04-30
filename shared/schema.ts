@@ -78,3 +78,23 @@ export type Store = typeof stores.$inferSelect;
 // Availability Types
 export const availabilityStatuses = ["inStock", "lowStock", "expected", "outOfStock"] as const;
 export type AvailabilityStatus = typeof availabilityStatuses[number];
+
+// Site Settings Schema
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  siteName: text("site_name").notNull(),
+  logoSvg: text("logo_svg"),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  metaTitle: text("meta_title"),
+  metaDescription: text("meta_description"),
+  vkUrl: text("vk_url"),
+  telegramUrl: text("telegram_url"),
+});
+
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings).omit({
+  id: true,
+});
+
+export type InsertSiteSettings = z.infer<typeof insertSiteSettingsSchema>;
+export type SiteSettings = typeof siteSettings.$inferSelect;

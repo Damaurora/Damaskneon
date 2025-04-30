@@ -1,48 +1,47 @@
 import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save } from "lucide-react";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
-// Схема для настроек сайта
+// Схема валидации настроек сайта
 const siteSettingsSchema = z.object({
-  siteName: z.string().min(2, "Название сайта должно содержать минимум 2 символа"),
+  siteName: z.string().min(3, "Название должно содержать минимум 3 символа"),
   logoSvg: z.string().optional(),
   contactEmail: z.string().email("Введите корректный email").optional().or(z.literal("")),
-  contactPhone: z.string().optional().or(z.literal("")),
+  contactPhone: z.string().min(5, "Телефон должен содержать минимум 5 символов").optional().or(z.literal("")),
   metaTitle: z.string().optional().or(z.literal("")),
   metaDescription: z.string().optional().or(z.literal("")),
-  vkUrl: z.string().url("Должен быть действительный URL").optional().or(z.literal("")),
-  telegramUrl: z.string().url("Должен быть действительный URL").optional().or(z.literal("")),
+  vkUrl: z.string().url("Введите корректный URL").optional().or(z.literal("")),
+  telegramUrl: z.string().url("Введите корректный URL").optional().or(z.literal("")),
 });
 
-// Типы для формы
+// Тип данных формы настроек
 type SiteSettingsValues = z.infer<typeof siteSettingsSchema>;
 
-// Интерфейс настроек
+// Интерфейс для настроек сайта
 interface SiteSettings {
   id: number;
   siteName: string;
@@ -55,13 +54,21 @@ interface SiteSettings {
   telegramUrl?: string;
 }
 
-// Компонент вкладки настроек
 export default function SettingsTab() {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(true);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  
-  // Инициализация формы
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Запрос для получения текущих настроек
+  const { data: settings, isLoading: isLoadingSettings } = useQuery<SiteSettings | undefined>({
+    queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/settings");
+      if (!res.ok) return undefined;
+      return await res.json();
+    },
+  });
+
+  // Настройка формы
   const form = useForm<SiteSettingsValues>({
     resolver: zodResolver(siteSettingsSchema),
     defaultValues: {
@@ -75,267 +82,237 @@ export default function SettingsTab() {
       telegramUrl: "",
     },
   });
-  
-  // Предпросмотр логотипа при изменении SVG
+
+  // Заполняем форму данными после загрузки настроек
   useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === "logoSvg") {
-        const svg = value.logoSvg;
-        if (svg && typeof svg === "string" && svg.trim().startsWith("<svg")) {
-          setLogoPreview(svg);
-        } else {
-          setLogoPreview(null);
-        }
-      }
-    });
-    
-    return () => subscription.unsubscribe();
-  }, [form.watch]);
-  
-  // Имитация загрузки настроек (в будущем можно заменить на API запрос)
-  useEffect(() => {
-    // Имитация задержки загрузки
-    const timer = setTimeout(() => {
-      // Можно заменить на реальный запрос к API для получения настроек
-      const settings = {
-        siteName: "Damask Shop",
-        logoSvg: "",
-        contactEmail: "damask.shop@mail.ru",
-        contactPhone: "+7 (900) 123-45-67",
-        metaTitle: "Damask Shop - Вейп магазин",
-        metaDescription: "Магазин вейп-товаров с широким ассортиментом",
-        vkUrl: "https://vk.com",
-        telegramUrl: "https://telegram.org",
-      };
-      
-      form.reset(settings);
-      setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, [form]);
-  
-  // Мутация для сохранения настроек
+    if (settings) {
+      form.reset({
+        siteName: settings.siteName,
+        logoSvg: settings.logoSvg || "",
+        contactEmail: settings.contactEmail || "",
+        contactPhone: settings.contactPhone || "",
+        metaTitle: settings.metaTitle || "",
+        metaDescription: settings.metaDescription || "",
+        vkUrl: settings.vkUrl || "",
+        telegramUrl: settings.telegramUrl || "",
+      });
+    }
+  }, [settings, form]);
+
+  // Мутация для обновления настроек
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: SiteSettingsValues) => {
-      // В реальном приложении здесь будет API-запрос
-      // const res = await apiRequest("PUT", "/api/settings", data);
-      // if (!res.ok) throw new Error("Ошибка при обновлении настроек");
-      // return await res.json();
-      
-      // Имитация успешного сохранения
-      return data;
+      const res = await apiRequest("PUT", "/api/settings", data);
+      if (!res.ok) throw new Error("Ошибка при обновлении настроек");
+      return await res.json();
     },
     onSuccess: () => {
       toast({
-        title: "Настройки сохранены",
-        description: "Изменения вступят в силу после перезагрузки страницы",
+        title: "Настройки обновлены",
+        description: "Настройки сайта успешно сохранены",
       });
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
     },
     onError: (error) => {
       toast({
         title: "Ошибка",
-        description: `Не удалось сохранить настройки: ${error.message}`,
+        description: `Не удалось обновить настройки: ${error.message}`,
         variant: "destructive",
       });
     },
   });
-  
-  // Обработчик отправки формы
+
+  // Обработка отправки формы
   const onSubmit = (values: SiteSettingsValues) => {
     updateSettingsMutation.mutate(values);
   };
-  
-  // Если данные загружаются, показываем индикатор загрузки
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Настройки сайта</CardTitle>
-        </CardHeader>
-        <CardContent className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </CardContent>
-      </Card>
-    );
-  }
-  
+
   return (
-    <Card>
+    <Card className="border-secondary">
       <CardHeader>
-        <CardTitle>Настройки сайта</CardTitle>
+        <CardTitle className="font-unbounded">Настройки сайта</CardTitle>
         <CardDescription>
-          Настройте основные параметры сайта, такие как название, логотип и контактные данные
+          Управление общими настройками сайта, контактной информацией и метаданными
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="general">
-          <TabsList className="grid w-full md:w-[400px] grid-cols-2 mb-8">
-            <TabsTrigger value="general">Основные</TabsTrigger>
-            <TabsTrigger value="seo">SEO и контакты</TabsTrigger>
-          </TabsList>
-          
+        {isLoadingSettings ? (
+          <div className="flex justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <TabsContent value="general" className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="siteName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Название сайта</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Damask Shop" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="logoSvg"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Логотип (SVG код)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="<svg>...</svg>"
-                          className="min-h-40 font-mono text-sm"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Вставьте SVG код логотипа. Рекомендуемый размер: 150x50px.
-                      </FormDescription>
-                      <FormMessage />
-                      
-                      {logoPreview && (
-                        <div className="mt-2 p-4 border border-border rounded-md bg-black">
-                          <p className="text-xs text-muted-foreground mb-2">Предпросмотр:</p>
-                          <div 
-                            className="bg-black p-2 flex justify-center items-center"
-                            dangerouslySetInnerHTML={{ __html: logoPreview }}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Основные настройки */}
+                <div className="space-y-4 md:col-span-2">
+                  <h3 className="text-lg font-medium font-unbounded">Основные настройки</h3>
+                  
+                  <FormField
+                    control={form.control}
+                    name="siteName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Название сайта</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Damask Shop" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="logoSvg"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Логотип (SVG код)</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="<svg>...</svg>" 
+                            className="min-h-28 font-mono text-xs"
+                            {...field} 
                           />
-                        </div>
+                        </FormControl>
+                        <FormDescription>
+                          Вставьте SVG код логотипа для отображения на сайте
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                {/* Контактная информация */}
+                <div className="space-y-4 md:col-span-2">
+                  <h3 className="text-lg font-medium font-unbounded">Контактная информация</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="contactEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="contact@damaskshop.ru" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    </FormItem>
-                  )}
-                />
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="contactPhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Телефон</FormLabel>
+                          <FormControl>
+                            <Input placeholder="+7 (900) 123-45-67" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
                 
-                <FormField
-                  control={form.control}
-                  name="vkUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ссылка на ВКонтакте</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://vk.com/damaskshop" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Социальные сети */}
+                <div className="space-y-4 md:col-span-2">
+                  <h3 className="text-lg font-medium font-unbounded">Социальные сети</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="vkUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>ВКонтакте</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://vk.com/damaskshop" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="telegramUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Телеграм</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://t.me/damaskshop" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
                 
-                <FormField
-                  control={form.control}
-                  name="telegramUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ссылка на Телеграм</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://t.me/damaskshop" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
+                {/* Мета-теги */}
+                <div className="space-y-4 md:col-span-2">
+                  <h3 className="text-lg font-medium font-unbounded">SEO и метаданные</h3>
+                  
+                  <FormField
+                    control={form.control}
+                    name="metaTitle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Заголовок страницы (Title)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Damask Shop - магазин вейп-товаров" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Используется в заголовке браузера и результатах поиска
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="metaDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Описание (Description)</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Магазин вейп-товаров Damask Shop - большой выбор под-систем, модов, жидкостей и аксессуаров." 
+                            className="min-h-24"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Отображается в результатах поиска под заголовком страницы
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
               
-              <TabsContent value="seo" className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="metaTitle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Damask Shop - Вейп магазин" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Заголовок страницы в поисковых системах
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+              <div className="flex justify-end">
+                <Button 
+                  type="submit" 
+                  disabled={updateSettingsMutation.isPending}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {updateSettingsMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="metaDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Магазин вейп-товаров с широким ассортиментом продукции"
-                          className="min-h-20"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Описание сайта для поисковых систем (рекомендуется 150-160 символов)
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="contactEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Контактный E-mail</FormLabel>
-                      <FormControl>
-                        <Input placeholder="info@damaskshop.ru" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="contactPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Контактный телефон</FormLabel>
-                      <FormControl>
-                        <Input placeholder="+7 (900) 123-45-67" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
-              
-              <Button 
-                type="submit" 
-                disabled={updateSettingsMutation.isPending}
-                className="w-full sm:w-auto"
-              >
-                {updateSettingsMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {!updateSettingsMutation.isPending && (
-                  <Save className="mr-2 h-4 w-4" />
-                )}
-                Сохранить настройки
-              </Button>
+                  Сохранить настройки
+                </Button>
+              </div>
             </form>
           </Form>
-        </Tabs>
+        )}
       </CardContent>
     </Card>
   );

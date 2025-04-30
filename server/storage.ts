@@ -2,7 +2,8 @@ import {
   users, type User, type InsertUser,
   products, type Product, type InsertProduct,
   news, type News, type InsertNews,
-  stores, type Store, type InsertStore
+  stores, type Store, type InsertStore,
+  siteSettings, type SiteSettings, type InsertSiteSettings
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -28,6 +29,10 @@ export interface IStorage {
   getStores(): Promise<Store[]>;
   getStoreById(id: number): Promise<Store | undefined>;
   createStore(store: InsertStore): Promise<Store>;
+  
+  // Settings methods
+  getSettings(): Promise<SiteSettings | undefined>;
+  updateSettings(settings: InsertSiteSettings): Promise<SiteSettings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -94,6 +99,34 @@ export class DatabaseStorage implements IStorage {
   async createStore(insertStore: InsertStore): Promise<Store> {
     const [store] = await db.insert(stores).values(insertStore).returning();
     return store;
+  }
+  
+  // Settings methods
+  async getSettings(): Promise<SiteSettings | undefined> {
+    const [settings] = await db.select().from(siteSettings);
+    return settings;
+  }
+  
+  async updateSettings(settings: InsertSiteSettings): Promise<SiteSettings> {
+    // Проверяем существуют ли настройки
+    const existingSettings = await this.getSettings();
+    
+    if (existingSettings) {
+      // Обновляем существующие настройки
+      const [updatedSettings] = await db
+        .update(siteSettings)
+        .set(settings)
+        .where(eq(siteSettings.id, existingSettings.id))
+        .returning();
+      return updatedSettings;
+    } else {
+      // Создаем новые настройки
+      const [newSettings] = await db
+        .insert(siteSettings)
+        .values(settings)
+        .returning();
+      return newSettings;
+    }
   }
 }
 
