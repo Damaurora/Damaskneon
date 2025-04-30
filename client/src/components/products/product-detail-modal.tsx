@@ -38,8 +38,8 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-card w-full max-w-3xl rounded-xl overflow-hidden relative mx-4" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-8" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-card w-full max-w-3xl rounded-xl overflow-hidden relative mx-4 my-auto" onClick={(e) => e.stopPropagation()}>
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-white hover:text-primary transition z-10"
@@ -56,15 +56,20 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
               className="w-full h-full object-cover md:h-96"
             />
           </div>
-          <div className="md:w-1/2 p-6">
+          <div className="md:w-1/2 p-6 max-h-[80vh] overflow-y-auto">
             <h3 className="text-2xl font-unbounded font-bold mb-2">{product.name}</h3>
-            <div className="flex items-center mb-4">
-              <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium mr-2 font-roboto">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium font-roboto">
                 {getCategoryLabel(product.category)}
               </span>
               {product.isTopProduct && (
                 <span className="px-3 py-1 bg-accent/20 text-accent rounded-full text-xs font-medium font-roboto">
                   Хит продаж
+                </span>
+              )}
+              {product.isNew && (
+                <span className="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium font-roboto">
+                  Новинка
                 </span>
               )}
             </div>
@@ -101,14 +106,30 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-roboto">ул. Гагарина, 32</span>
                   <span className="flex items-center">
-                    <span className={`w-3 h-3 rounded-full bg-[${product.gagarinAvailability === 'inStock' ? '#00C853' : product.gagarinAvailability === 'lowStock' ? '#FF3D00' : product.gagarinAvailability === 'expected' ? '#FF9100' : '#9E9E9E'}] mr-1`}></span>
+                    <span className={`w-3 h-3 rounded-full mr-1 ${
+                      product.gagarinAvailability === 'inStock' 
+                        ? 'bg-[#00C853]' 
+                        : product.gagarinAvailability === 'lowStock' 
+                          ? 'bg-[#FF3D00]' 
+                          : product.gagarinAvailability === 'expected' 
+                            ? 'bg-[#FF9100]' 
+                            : 'bg-[#9E9E9E]'
+                    }`}></span>
                     <span className="text-sm font-roboto">{getStatusLabel(product.gagarinAvailability)}</span>
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-roboto">ул. Победы, 7</span>
                   <span className="flex items-center">
-                    <span className={`w-3 h-3 rounded-full bg-[${product.pobedyAvailability === 'inStock' ? '#00C853' : product.pobedyAvailability === 'lowStock' ? '#FF3D00' : product.pobedyAvailability === 'expected' ? '#FF9100' : '#9E9E9E'}] mr-1`}></span>
+                    <span className={`w-3 h-3 rounded-full mr-1 ${
+                      product.pobedyAvailability === 'inStock' 
+                        ? 'bg-[#00C853]' 
+                        : product.pobedyAvailability === 'lowStock' 
+                          ? 'bg-[#FF3D00]' 
+                          : product.pobedyAvailability === 'expected' 
+                            ? 'bg-[#FF9100]' 
+                            : 'bg-[#9E9E9E]'
+                    }`}></span>
                     <span className="text-sm font-roboto">{getStatusLabel(product.pobedyAvailability)}</span>
                   </span>
                 </div>

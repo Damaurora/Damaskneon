@@ -13,16 +13,14 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           alt={product.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
         />
-        {product.isTopProduct && (
-          <div className="absolute top-3 left-3">
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {product.isTopProduct && (
             <span className="bg-primary text-white text-xs px-2 py-1 rounded-full font-roboto">Топ продаж</span>
-          </div>
-        )}
-        {product.isNew && (
-          <div className="absolute top-3 left-3">
+          )}
+          {product.isNew && (
             <span className="bg-accent text-white text-xs px-2 py-1 rounded-full font-roboto neon-blue-border">Новинка</span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <div className="p-4">
         <h3 className="font-unbounded font-bold text-lg mb-2">{product.name}</h3>
