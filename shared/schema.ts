@@ -43,9 +43,11 @@ export const news = pgTable("news", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   content: text("content").notNull(),
+  fullContent: text("full_content"),
   date: text("date").notNull(),
   imageUrl: text("image_url").notNull(),
   type: text("type").notNull(), // "news" or "promo"
+  validUntil: text("valid_until"),
 });
 
 export const insertNewsSchema = createInsertSchema(news).omit({

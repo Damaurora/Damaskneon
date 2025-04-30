@@ -2,10 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { News } from "@shared/schema";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import NewsDetailModal from "./news-detail-modal";
 
 const NewsSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesPerView, setSlidesPerView] = useState(1);
+  const [selectedNews, setSelectedNews] = useState<News | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const newsSliderRef = useRef<HTMLDivElement>(null);
 
   const { data: news = [], isLoading } = useQuery<News[]>({
@@ -83,7 +86,15 @@ const NewsSection = () => {
             <p className="text-gray-300 mb-3 font-roboto">{item.content}</p>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-400 font-roboto">{item.date}</span>
-              <a href="#" className="text-primary font-roboto font-medium hover:underline">Подробнее</a>
+              <button 
+                onClick={() => {
+                  setSelectedNews(item);
+                  setIsModalOpen(true);
+                }}
+                className="text-primary font-roboto font-medium hover:underline bg-transparent border-none cursor-pointer p-0"
+              >
+                Подробнее
+              </button>
             </div>
           </div>
         </div>
@@ -140,6 +151,13 @@ const NewsSection = () => {
           ))}
         </div>
       </div>
+      
+      {/* Модальное окно для просмотра полной новости */}
+      <NewsDetailModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        news={selectedNews}
+      />
     </section>
   );
 };
