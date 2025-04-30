@@ -35,20 +35,25 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background">
       {/* Шапка админки */}
       <header className="border-b border-border bg-card">
-        <div className="container mx-auto py-4">
+        <div className="container mx-auto py-4 px-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-unbounded neon-text">Панель администратора</h1>
+            <h1 className="text-xl sm:text-2xl font-unbounded neon-text">
+              <span className="hidden sm:inline">Панель администратора</span>
+              <span className="sm:hidden">Управление</span>
+            </h1>
             <Button 
               variant="outline" 
               onClick={handleLogout}
               disabled={isLoggingOut}
+              size="sm"
+              className="sm:h-10 sm:px-4 h-9 px-2"
             >
               {isLoggingOut ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 sm:mr-2" />
               ) : (
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="h-4 w-4 sm:mr-2" />
               )}
-              Выйти
+              <span className="hidden sm:inline">Выйти</span>
             </Button>
           </div>
         </div>
