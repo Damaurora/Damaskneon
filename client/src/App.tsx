@@ -5,11 +5,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
+import AuthPage from "@/pages/auth-page";
+import AdminPage from "@/pages/admin-page";
+import { AdminProtectedRoute } from "@/components/admin/admin-protected-route";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/auth" component={AuthPage} />
+      <Route path="/admin">
+        {() => <AdminProtectedRoute component={AdminPage} />}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
