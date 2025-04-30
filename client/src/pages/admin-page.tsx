@@ -3,10 +3,11 @@ import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, LogOut, Package, Newspaper, Store } from "lucide-react";
+import { Loader2, LogOut, Package, Newspaper, Store, Settings } from "lucide-react";
 import ProductsTab from "@/components/admin/products-tab";
 import NewsTab from "@/components/admin/news-tab";
 import StoresTab from "@/components/admin/stores-tab";
+import SettingsTab from "@/components/admin/settings-tab";
 
 export default function AdminPage() {
   const [, setLocation] = useLocation();
@@ -56,7 +57,7 @@ export default function AdminPage() {
       {/* Основной контент */}
       <main className="container mx-auto py-6 px-4">
         <Tabs defaultValue="products">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="products" className="flex items-center">
               <Package className="h-4 w-4 mr-2" />
               Товары
@@ -68,6 +69,10 @@ export default function AdminPage() {
             <TabsTrigger value="stores" className="flex items-center">
               <Store className="h-4 w-4 mr-2" />
               Магазины
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center">
+              <Settings className="h-4 w-4 mr-2" />
+              Настройки
             </TabsTrigger>
           </TabsList>
 
@@ -81,6 +86,10 @@ export default function AdminPage() {
           
           <TabsContent value="stores">
             <StoresTab />
+          </TabsContent>
+          
+          <TabsContent value="settings">
+            <SettingsTab />
           </TabsContent>
         </Tabs>
       </main>

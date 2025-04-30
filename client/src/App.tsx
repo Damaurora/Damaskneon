@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import AuthPage from "@/pages/auth-page";
 import AdminPage from "@/pages/admin-page";
 import { AdminProtectedRoute } from "@/components/admin/admin-protected-route";
+import AgeVerificationModal from "@/components/age-verification-modal";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
+        <AgeVerificationModal />
         <Router />
       </TooltipProvider>
     </QueryClientProvider>

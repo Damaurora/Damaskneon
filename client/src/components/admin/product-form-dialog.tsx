@@ -45,7 +45,13 @@ interface ProductFormDialogProps {
 const productFormSchema = insertProductSchema.extend({
   imageUrl: z.string().url("Должен быть действительный URL изображения"),
   name: z.string().min(3, "Название должно содержать минимум 3 символа"),
+  customUrl: z.string()
+    .regex(/^[a-z0-9-]+$/, "URL может содержать только строчные буквы, цифры и дефисы")
+    .optional()
+    .or(z.literal("")),
   description: z.string().min(10, "Описание должно содержать минимум 10 символов"),
+  gagarinQuantity: z.number().int().min(0, "Количество не может быть отрицательным").optional(),
+  pobedyQuantity: z.number().int().min(0, "Количество не может быть отрицательным").optional(),
   specifications: z.record(z.string(), z.string()).optional(),
   packageContents: z.record(z.string(), z.string()).optional(),
 });
@@ -69,11 +75,14 @@ export default function ProductFormDialog({
       name: "",
       description: "",
       imageUrl: "",
+      customUrl: "",
       category: "pod",
       isTopProduct: false,
       isNew: false,
       gagarinAvailability: "outOfStock",
       pobedyAvailability: "outOfStock",
+      gagarinQuantity: 0,
+      pobedyQuantity: 0,
       specifications: {},
       packageContents: {},
     },
