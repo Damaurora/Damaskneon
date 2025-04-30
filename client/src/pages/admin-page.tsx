@@ -57,22 +57,23 @@ export default function AdminPage() {
       {/* Основной контент */}
       <main className="container mx-auto py-6 px-4">
         <Tabs defaultValue="products">
+          {/* Адаптивные табы: иконки на мобильных устройствах, текст на больших экранах */}
           <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="products" className="flex items-center">
-              <Package className="h-4 w-4 mr-2" />
-              Товары
+            <TabsTrigger value="products" className="flex items-center justify-center">
+              <Package className="h-5 w-5 sm:mr-2" />
+              <span className="hidden sm:inline">Товары</span>
             </TabsTrigger>
-            <TabsTrigger value="news" className="flex items-center">
-              <Newspaper className="h-4 w-4 mr-2" />
-              Новости
+            <TabsTrigger value="news" className="flex items-center justify-center">
+              <Newspaper className="h-5 w-5 sm:mr-2" />
+              <span className="hidden sm:inline">Новости</span>
             </TabsTrigger>
-            <TabsTrigger value="stores" className="flex items-center">
-              <Store className="h-4 w-4 mr-2" />
-              Магазины
+            <TabsTrigger value="stores" className="flex items-center justify-center">
+              <Store className="h-5 w-5 sm:mr-2" />
+              <span className="hidden sm:inline">Магазины</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center">
-              <Settings className="h-4 w-4 mr-2" />
-              Настройки
+            <TabsTrigger value="settings" className="flex items-center justify-center">
+              <Settings className="h-5 w-5 sm:mr-2" />
+              <span className="hidden sm:inline">Настройки</span>
             </TabsTrigger>
           </TabsList>
 

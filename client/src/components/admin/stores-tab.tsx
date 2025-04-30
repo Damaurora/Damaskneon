@@ -89,7 +89,58 @@ export default function StoresTab() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <Table>
+            {/* Мобильное представление для маленьких экранов */}
+            <div className="md:hidden grid gap-4">
+              {stores?.map((store) => (
+                <Card key={store.id} className="overflow-hidden">
+                  <div className="flex items-center p-4 gap-3">
+                    <img
+                      src={store.imageUrl}
+                      alt={store.name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-base">{store.name}</h3>
+                      <p className="text-sm text-muted-foreground">{store.address}</p>
+                      <p className="text-sm mt-1">{store.phone}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="px-4 pb-2">
+                    <div className="text-xs">
+                      <p className="text-muted-foreground">Время работы: {store.hours}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-border px-4 py-3 flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditClick(store)}
+                      className="h-9 px-3"
+                    >
+                      <Edit className="h-4 w-4 mr-1" /> Изменить
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-3 text-destructive border-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteClick(store)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" /> Удалить
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+              {stores?.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Нет доступных магазинов
+                </div>
+              )}
+            </div>
+            
+            {/* Табличное представление для больших экранов */}
+            <Table className="hidden md:table">
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>

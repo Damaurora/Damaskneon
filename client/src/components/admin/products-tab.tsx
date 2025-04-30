@@ -90,7 +90,76 @@ export default function ProductsTab() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <Table>
+            {/* Мобильное представление для маленьких экранов */}
+            <div className="md:hidden grid gap-4">
+              {products?.map((product) => (
+                <Card key={product.id} className="overflow-hidden">
+                  <div className="flex items-center p-4 gap-3">
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-base">{product.name}</h3>
+                      <p className="text-sm text-muted-foreground">{getCategoryLabel(product.category)}</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {product.isTopProduct && (
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary text-xs">
+                            Топ
+                          </Badge>
+                        )}
+                        {product.isNew && (
+                          <Badge variant="outline" className="bg-accent/10 text-accent border-accent text-xs">
+                            Новинка
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="px-4 pb-2">
+                    <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                      <div className="flex items-center gap-1">
+                        <span className={`w-2 h-2 rounded-full ${getStatusColorClass(product.gagarinAvailability)}`}></span>
+                        <span>Гагарина: {getStatusLabel(product.gagarinAvailability)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className={`w-2 h-2 rounded-full ${getStatusColorClass(product.pobedyAvailability)}`}></span>
+                        <span>Победы: {getStatusLabel(product.pobedyAvailability)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-border px-4 py-3 flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditClick(product)}
+                      className="h-9 px-3"
+                    >
+                      <Edit className="h-4 w-4 mr-1" /> Изменить
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-3 text-destructive border-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteClick(product)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" /> Удалить
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+              {products?.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Нет доступных товаров
+                </div>
+              )}
+            </div>
+            
+            {/* Табличное представление для больших экранов */}
+            <Table className="hidden md:table">
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>

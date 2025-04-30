@@ -90,7 +90,61 @@ export default function NewsTab() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <Table>
+            {/* Мобильное представление для маленьких экранов */}
+            <div className="md:hidden grid gap-4">
+              {newsList?.map((news) => (
+                <Card key={news.id} className="overflow-hidden">
+                  <div className="flex items-center p-4 gap-3">
+                    <img
+                      src={news.imageUrl}
+                      alt={news.title}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-base">{news.title}</h3>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-sm text-muted-foreground">{news.date}</p>
+                        <Badge
+                          variant="outline"
+                          className={news.type === "news" 
+                            ? "bg-accent/10 text-accent border-accent text-xs" 
+                            : "bg-primary/10 text-primary border-primary text-xs"}
+                        >
+                          {news.type === "news" ? "Новость" : "Акция"}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-border px-4 py-3 flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditClick(news)}
+                      className="h-9 px-3"
+                    >
+                      <Edit className="h-4 w-4 mr-1" /> Изменить
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 px-3 text-destructive border-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteClick(news)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" /> Удалить
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+              {newsList?.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Нет доступных новостей
+                </div>
+              )}
+            </div>
+            
+            {/* Табличное представление для больших экранов */}
+            <Table className="hidden md:table">
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
