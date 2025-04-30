@@ -147,11 +147,14 @@ export default function StoreFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto" aria-describedby="store-form-description">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Добавить новый магазин" : "Редактировать информацию о магазине"}
           </DialogTitle>
+          <span id="store-form-description" className="sr-only">
+            Форма для создания или редактирования магазина
+          </span>
         </DialogHeader>
 
         <Form {...form}>

@@ -149,11 +149,14 @@ export default function NewsFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto" aria-describedby="news-form-description">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Добавить новую новость" : "Редактировать новость"}
           </DialogTitle>
+          <span id="news-form-description" className="sr-only">
+            Форма для создания или редактирования новости
+          </span>
         </DialogHeader>
 
         <Form {...form}>
