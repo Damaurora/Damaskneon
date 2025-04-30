@@ -11,7 +11,7 @@ const NewsDetailModal = ({ isOpen, onClose, news }: NewsDetailModalProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-8" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-card w-full max-w-3xl rounded-xl overflow-hidden relative mx-4 my-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-card w-full max-w-3xl rounded-xl overflow-hidden relative mx-4 my-auto" onClick={(e) => e.stopPropagation()} aria-describedby="news-modal-description">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-white hover:text-primary transition z-10"
@@ -19,6 +19,9 @@ const NewsDetailModal = ({ isOpen, onClose, news }: NewsDetailModalProps) => {
         >
           <i className="ri-close-line text-2xl"></i>
         </button>
+        <span id="news-modal-description" className="sr-only">
+          Модальное окно с подробной информацией о новости или акции
+        </span>
         
         <div className="flex flex-col">
           <div className="relative">
