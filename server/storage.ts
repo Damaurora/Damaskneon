@@ -4,6 +4,8 @@ import {
   news, type News, type InsertNews,
   stores, type Store, type InsertStore
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -28,34 +30,80 @@ export interface IStorage {
   createStore(store: InsertStore): Promise<Store>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private productsMap: Map<number, Product>;
-  private newsMap: Map<number, News>;
-  private storesMap: Map<number, Store>;
-  
-  private userCurrentId: number;
-  private productCurrentId: number;
-  private newsCurrentId: number;
-  private storeCurrentId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.productsMap = new Map();
-    this.newsMap = new Map();
-    this.storesMap = new Map();
-    
-    this.userCurrentId = 1;
-    this.productCurrentId = 1;
-    this.newsCurrentId = 1;
-    this.storeCurrentId = 1;
-    
-    // Initialize with some sample data
-    this.initializeData();
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
-  private initializeData() {
-    // Initialize products
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+  
+  // Product methods
+  async getProducts(): Promise<Product[]> {
+    return await db.select().from(products);
+  }
+  
+  async getTopProducts(): Promise<Product[]> {
+    return await db.select().from(products).where(eq(products.isTopProduct, true));
+  }
+  
+  async getProductById(id: number): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product;
+  }
+  
+  async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    const [product] = await db.insert(products).values(insertProduct).returning();
+    return product;
+  }
+  
+  // News methods
+  async getNews(): Promise<News[]> {
+    return await db.select().from(news);
+  }
+  
+  async getNewsById(id: number): Promise<News | undefined> {
+    const [newsItem] = await db.select().from(news).where(eq(news.id, id));
+    return newsItem;
+  }
+  
+  async createNews(insertNews: InsertNews): Promise<News> {
+    const [newsItem] = await db.insert(news).values(insertNews).returning();
+    return newsItem;
+  }
+  
+  // Store methods
+  async getStores(): Promise<Store[]> {
+    return await db.select().from(stores);
+  }
+  
+  async getStoreById(id: number): Promise<Store | undefined> {
+    const [store] = await db.select().from(stores).where(eq(stores.id, id));
+    return store;
+  }
+  
+  async createStore(insertStore: InsertStore): Promise<Store> {
+    const [store] = await db.insert(stores).values(insertStore).returning();
+    return store;
+  }
+}
+
+export const storage = new DatabaseStorage();
+
+// Initialize demo data if needed
+export async function initializeDemoData() {
+  const existingProducts = await storage.getProducts();
+  if (existingProducts.length === 0) {
+    // Populate products
     const productsList = [
       {
         name: "SMOK Nord 5",
@@ -288,9 +336,9 @@ export class MemStorage implements IStorage {
       }
     ];
     
-    productsList.forEach(product => {
-      this.createProduct(product as any);
-    });
+    for (const product of productsList) {
+      await storage.createProduct(product as any);
+    }
     
     // Initialize news
     const newsList = [
@@ -317,9 +365,9 @@ export class MemStorage implements IStorage {
       }
     ];
     
-    newsList.forEach(newsItem => {
-      this.createNews(newsItem as any);
-    });
+    for (const newsItem of newsList) {
+      await storage.createNews(newsItem as any);
+    }
     
     // Initialize stores
     const storesList = [
@@ -345,80 +393,8 @@ export class MemStorage implements IStorage {
       }
     ];
     
-    storesList.forEach(store => {
-      this.createStore(store as any);
-    });
-  }
-
-  // User methods
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userCurrentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
-  }
-  
-  // Product methods
-  async getProducts(): Promise<Product[]> {
-    return Array.from(this.productsMap.values());
-  }
-  
-  async getTopProducts(): Promise<Product[]> {
-    return Array.from(this.productsMap.values()).filter(product => product.isTopProduct);
-  }
-  
-  async getProductById(id: number): Promise<Product | undefined> {
-    return this.productsMap.get(id);
-  }
-  
-  async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const id = this.productCurrentId++;
-    const product: Product = { ...insertProduct, id };
-    this.productsMap.set(id, product);
-    return product;
-  }
-  
-  // News methods
-  async getNews(): Promise<News[]> {
-    return Array.from(this.newsMap.values());
-  }
-  
-  async getNewsById(id: number): Promise<News | undefined> {
-    return this.newsMap.get(id);
-  }
-  
-  async createNews(insertNews: InsertNews): Promise<News> {
-    const id = this.newsCurrentId++;
-    const newsItem: News = { ...insertNews, id };
-    this.newsMap.set(id, newsItem);
-    return newsItem;
-  }
-  
-  // Store methods
-  async getStores(): Promise<Store[]> {
-    return Array.from(this.storesMap.values());
-  }
-  
-  async getStoreById(id: number): Promise<Store | undefined> {
-    return this.storesMap.get(id);
-  }
-  
-  async createStore(insertStore: InsertStore): Promise<Store> {
-    const id = this.storeCurrentId++;
-    const store: Store = { ...insertStore, id };
-    this.storesMap.set(id, store);
-    return store;
+    for (const store of storesList) {
+      await storage.createStore(store as any);
+    }
   }
 }
-
-export const storage = new MemStorage();
