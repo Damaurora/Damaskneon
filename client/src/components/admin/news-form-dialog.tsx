@@ -45,6 +45,8 @@ const newsFormSchema = insertNewsSchema.extend({
   imageUrl: z.string().url("Должен быть действительный URL изображения"),
   title: z.string().min(3, "Заголовок должен содержать минимум 3 символа"),
   content: z.string().min(10, "Содержание должно содержать минимум 10 символов"),
+  fullContent: z.string().optional(),
+  validUntil: z.string().optional(),
 });
 
 type NewsFormValues = z.infer<typeof newsFormSchema>;
@@ -63,9 +65,11 @@ export default function NewsFormDialog({
     defaultValues: {
       title: "",
       content: "",
+      fullContent: "",
       imageUrl: "",
       date: new Date().toISOString().split('T')[0], // Сегодняшняя дата в формате YYYY-MM-DD
       type: "news",
+      validUntil: "",
     },
   });
 
@@ -75,9 +79,11 @@ export default function NewsFormDialog({
       form.reset({
         title: news.title,
         content: news.content,
+        fullContent: news.fullContent || "",
         imageUrl: news.imageUrl,
         date: news.date,
         type: news.type,
+        validUntil: news.validUntil || "",
       });
     }
   }, [news, mode, form]);
@@ -226,11 +232,11 @@ export default function NewsFormDialog({
                 name="content"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <FormLabel>Содержание</FormLabel>
+                    <FormLabel>Краткое содержание</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Содержание новости"
-                        className="min-h-32"
+                        placeholder="Краткое содержание для карточки новости"
+                        className="min-h-20"
                         {...field}
                       />
                     </FormControl>
@@ -238,6 +244,40 @@ export default function NewsFormDialog({
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="fullContent"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Полное содержание</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Полный текст новости (отображается при просмотре детальной информации)"
+                        className="min-h-40"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              {form.watch("type") === "promo" && (
+                <FormField
+                  control={form.control}
+                  name="validUntil"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Действует до</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
 
             <DialogFooter>
