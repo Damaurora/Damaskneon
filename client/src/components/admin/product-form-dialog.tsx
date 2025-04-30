@@ -343,7 +343,7 @@ export default function ProductFormDialog({
                     <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                       <FormControl>
                         <Checkbox
-                          checked={field.value}
+                          checked={field.value === true}
                           onCheckedChange={(checked) => field.onChange(checked || false)}
                         />
                       </FormControl>
@@ -361,7 +361,7 @@ export default function ProductFormDialog({
                     <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                       <FormControl>
                         <Checkbox
-                          checked={field.value}
+                          checked={field.value === true}
                           onCheckedChange={(checked) => field.onChange(checked || false)}
                         />
                       </FormControl>

@@ -102,6 +102,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get site settings
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getSettings();
+      res.json(settings || { siteName: "Damask Shop" });
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка при получении настроек сайта" });
+    }
+  });
+
+  // Update site settings
+  app.put("/api/settings", async (req, res) => {
+    try {
+      const settings = req.body;
+      const updatedSettings = await storage.updateSettings(settings);
+      res.json(updatedSettings);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка при обновлении настроек сайта" });
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
 

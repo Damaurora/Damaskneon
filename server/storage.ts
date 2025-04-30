@@ -134,6 +134,25 @@ export const storage = new DatabaseStorage();
 
 // Initialize demo data if needed
 export async function initializeDemoData() {
+  // Инициализируем настройки сайта, если они еще не созданы
+  const existingSettings = await storage.getSettings();
+  if (!existingSettings) {
+    await storage.updateSettings({
+      siteName: "Damask Shop",
+      logoSvg: `<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 8h25a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8H10a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8z" fill="#FF5722"/>
+      <path d="M19 15h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V17a2 2 0 0 1 2-2zm13 0h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V17a2 2 0 0 1 2-2z" fill="#000"/>
+      <text x="48" y="28" font-family="Unbounded, sans-serif" font-size="18" font-weight="bold" fill="#fff">Damask</text>
+      </svg>`,
+      contactEmail: "info@damaskshop.ru",
+      contactPhone: "+7 (900) 123-45-67",
+      metaTitle: "Damask Shop - магазин вейп-товаров",
+      metaDescription: "Магазин вейп-товаров Damask Shop - большой выбор электронных сигарет, жидкостей и аксессуаров в Москве.",
+      vkUrl: "https://vk.com/damaskshop",
+      telegramUrl: "https://t.me/damaskshop"
+    });
+  }
+
   const existingProducts = await storage.getProducts();
   if (existingProducts.length === 0) {
     // Populate products
