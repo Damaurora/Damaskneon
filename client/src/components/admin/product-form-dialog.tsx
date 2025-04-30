@@ -17,6 +17,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import {
   Select,
@@ -292,6 +293,26 @@ export default function ProductFormDialog({
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="customUrl"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Кастомный URL</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-muted-foreground">/products/</span>
+                        <Input placeholder="custom-product-url" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Только строчные латинские буквы, цифры и дефисы
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -323,7 +344,7 @@ export default function ProductFormDialog({
                       <FormControl>
                         <Checkbox
                           checked={field.value}
-                          onCheckedChange={field.onChange}
+                          onCheckedChange={(checked) => field.onChange(checked || false)}
                         />
                       </FormControl>
                       <FormLabel className="font-normal cursor-pointer">
@@ -341,7 +362,7 @@ export default function ProductFormDialog({
                       <FormControl>
                         <Checkbox
                           checked={field.value}
-                          onCheckedChange={field.onChange}
+                          onCheckedChange={(checked) => field.onChange(checked || false)}
                         />
                       </FormControl>
                       <FormLabel className="font-normal cursor-pointer">
@@ -402,6 +423,54 @@ export default function ProductFormDialog({
                           <SelectItem value="outOfStock">Нет в наличии</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="gagarinQuantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Количество на Гагарина</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="0"
+                          min="0"
+                          {...field}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || 0}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Точное количество товара на складе
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="pobedyQuantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Количество на Победы</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="0"
+                          min="0"
+                          {...field}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || 0}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Точное количество товара на складе
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

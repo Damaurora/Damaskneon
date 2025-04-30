@@ -49,13 +49,17 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
         </button>
         
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2">
+          <div className="md:w-1/2 relative">
             <img 
               src={product.imageUrl} 
               alt={product.name} 
               className="w-full h-full object-cover md:h-96"
             />
+            {/* Вертикальная неоновая полоска справа */}
+            <div className="hidden md:block absolute top-0 right-0 w-[2px] h-full bg-primary neon-primary-border"></div>
           </div>
+          {/* Горизонтальная неоновая полоска для мобильных устройств */}
+          <div className="md:hidden h-[2px] w-full bg-primary neon-primary-border"></div>
           <div className="md:w-1/2 p-6 max-h-[80vh] overflow-y-auto">
             <h3 className="text-2xl font-unbounded font-bold mb-2">{product.name}</h3>
             <div className="flex flex-wrap items-center gap-2 mb-4">

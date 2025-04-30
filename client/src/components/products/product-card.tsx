@@ -22,6 +22,8 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           )}
         </div>
       </div>
+      {/* Неоновая оранжевая полоска */}
+      <div className="h-[2px] w-full bg-primary neon-primary-border"></div>
       <div className="p-4">
         <h3 className="font-unbounded font-bold text-lg mb-2">{product.name}</h3>
         <p className="text-gray-400 mb-3 text-sm font-roboto line-clamp-2">{product.description}</p>
