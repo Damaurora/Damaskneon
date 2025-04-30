@@ -140,12 +140,14 @@ const ProductDetailModal = ({ isOpen, onClose, product }: ProductDetailModalProp
               </div>
             </div>
             
-            <div className="flex space-x-3">
-              <a href="#" className="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-opacity-80 transition flex-1 text-center font-roboto">
-                Забронировать
-              </a>
-              <a href="tel:+79001234567" className="px-4 py-2 rounded-lg bg-transparent border border-primary text-white hover:bg-primary/10 transition font-roboto">
-                <i className="ri-phone-line mr-1"></i> Позвонить
+            <div className="flex">
+              <a 
+                href={`https://t.me/NnDogWithoutsmth?text=${encodeURIComponent(`Здравствуйте, можно уточнить по наличию/вкусу/цвета "${product.name}" в вашем прекрасном магазине?`)}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-opacity-80 transition flex-1 text-center font-roboto flex items-center justify-center"
+              >
+                <i className="ri-telegram-line mr-2"></i> Уточнить наличие
               </a>
             </div>
           </div>
