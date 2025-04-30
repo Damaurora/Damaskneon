@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Roboto:wght@400;500;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 7%;  /* #121212 */
+  --foreground: 0 0% 100%; /* white */
+  
+  /* Cards and UI components */
+  --card: 0 0% 12%; /* #1E1E1E */
+  --card-foreground: 0 0% 100%;
+  
+  /* Primary colors - Orange */
+  --primary: 16 100% 57%; /* #FF5722 */
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary colors */
+  --secondary: 0 0% 20%; /* #333333 */
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Borders */
+  --border: 0 0% 20%; /* #333333 */
+  --input: 0 0% 20%;
+  
+  /* Accent - Neon Blue */
+  --accent: 184 100% 50%; /* #00E5FF */
+  --accent-foreground: 0 0% 100%;
+  
+  /* Neon Orange - for glowing effects */
+  --neon-orange: 23 100% 64%; /* #FF7E47 */
+  
+  /* Muted colors */
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 70%;
+  
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* Popover */
+  --popover: 0 0% 12%;
+  --popover-foreground: 0 0% 100%;
+  
+  /* Status colors */
+  --in-stock: 142 100% 39%; /* #00C853 */
+  --low-stock: 14 100% 50%; /* #FF3D00 */
+  --expected: 36 100% 50%; /* #FF9100 */
+  --out-of-stock: 0 0% 62%; /* #9E9E9E */
+  
+  /* Ring */
+  --ring: 16 100% 57%;
+  
+  /* Radius */
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-roboto antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-unbounded font-bold;
+  }
+}
+
+@layer components {
+  .neon-border {
+    @apply border-2 border-primary shadow-[0_0_8px_var(--tw-shadow-color),inset_0_0_8px_var(--tw-shadow-color)] shadow-primary/70 transition-all duration-300;
+  }
+  
+  .neon-blue-border {
+    @apply border-2 border-accent shadow-[0_0_8px_var(--tw-shadow-color),inset_0_0_8px_var(--tw-shadow-color)] shadow-accent/70 transition-all duration-300;
+  }
+  
+  .neon-text {
+    @apply text-primary drop-shadow-[0_0_5px_rgba(255,126,71,0.7)];
+  }
+  
+  .neon-blue-text {
+    @apply text-accent drop-shadow-[0_0_5px_rgba(0,229,255,0.7)];
+  }
+  
+  .neon-pulse {
+    @apply animate-[neon-pulse_2s_infinite];
+  }
+  
+  .hover-neon-border {
+    @apply border border-secondary hover:border-primary hover:shadow-[0_0_8px_var(--tw-shadow-color),inset_0_0_8px_var(--tw-shadow-color)] hover:shadow-primary/70 transition-all duration-300;
+  }
+}
+
+@keyframes neon-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(255, 126, 71, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 126, 71, 0.9));
+  }
+}
