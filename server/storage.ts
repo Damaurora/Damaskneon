@@ -19,16 +19,22 @@ export interface IStorage {
   getTopProducts(): Promise<Product[]>;
   getProductById(id: number): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: InsertProduct): Promise<Product>;
+  deleteProduct(id: number): Promise<void>;
   
   // News methods
   getNews(): Promise<News[]>;
   getNewsById(id: number): Promise<News | undefined>;
   createNews(newsItem: InsertNews): Promise<News>;
+  updateNews(id: number, newsItem: InsertNews): Promise<News>;
+  deleteNews(id: number): Promise<void>;
   
   // Store methods
   getStores(): Promise<Store[]>;
   getStoreById(id: number): Promise<Store | undefined>;
   createStore(store: InsertStore): Promise<Store>;
+  updateStore(id: number, store: InsertStore): Promise<Store>;
+  deleteStore(id: number): Promise<void>;
   
   // Settings methods
   getSettings(): Promise<SiteSettings | undefined>;
@@ -71,6 +77,19 @@ export class DatabaseStorage implements IStorage {
     return product;
   }
   
+  async updateProduct(id: number, insertProduct: InsertProduct): Promise<Product> {
+    const [product] = await db
+      .update(products)
+      .set(insertProduct)
+      .where(eq(products.id, id))
+      .returning();
+    return product;
+  }
+  
+  async deleteProduct(id: number): Promise<void> {
+    await db.delete(products).where(eq(products.id, id));
+  }
+  
   // News methods
   async getNews(): Promise<News[]> {
     return await db.select().from(news);
@@ -86,6 +105,19 @@ export class DatabaseStorage implements IStorage {
     return newsItem;
   }
   
+  async updateNews(id: number, insertNews: InsertNews): Promise<News> {
+    const [newsItem] = await db
+      .update(news)
+      .set(insertNews)
+      .where(eq(news.id, id))
+      .returning();
+    return newsItem;
+  }
+  
+  async deleteNews(id: number): Promise<void> {
+    await db.delete(news).where(eq(news.id, id));
+  }
+  
   // Store methods
   async getStores(): Promise<Store[]> {
     return await db.select().from(stores);
@@ -99,6 +131,19 @@ export class DatabaseStorage implements IStorage {
   async createStore(insertStore: InsertStore): Promise<Store> {
     const [store] = await db.insert(stores).values(insertStore).returning();
     return store;
+  }
+  
+  async updateStore(id: number, insertStore: InsertStore): Promise<Store> {
+    const [store] = await db
+      .update(stores)
+      .set(insertStore)
+      .where(eq(stores.id, id))
+      .returning();
+    return store;
+  }
+  
+  async deleteStore(id: number): Promise<void> {
+    await db.delete(stores).where(eq(stores.id, id));
   }
   
   // Settings methods
