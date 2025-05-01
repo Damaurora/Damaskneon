@@ -9,8 +9,7 @@ const LocationsSection = () => {
   const renderStoreCards = () => {
     if (isLoading) {
       return Array(2).fill(0).map((_, i) => (
-        <div key={i} className="bg-card rounded-xl overflow-hidden animate-pulse">
-          <div className="h-64 bg-muted"></div>
+        <div key={i} className="bg-card rounded-xl overflow-hidden animate-pulse p-2">
           <div className="p-6">
             <div className="h-6 bg-muted rounded w-3/4 mb-3"></div>
             <div className="space-y-4">
@@ -25,13 +24,7 @@ const LocationsSection = () => {
     }
 
     return stores.map((store) => (
-      <div key={store.id} className="bg-card rounded-xl overflow-hidden group relative">
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-background/90 to-transparent transition duration-300 pointer-events-none"></div>
-        <img 
-          src={store.imageUrl} 
-          alt={store.name} 
-          className="w-full h-64 object-cover"
-        />
+      <div key={store.id} className="bg-card rounded-xl overflow-hidden group relative p-2">
         <div className="p-6 relative">
           <h3 className="font-unbounded font-bold text-xl mb-3">{store.name}</h3>
           <div className="flex items-start mb-4">
