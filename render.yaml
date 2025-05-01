@@ -1,0 +1,58 @@
+services:
+  # Основное веб-приложение
+  - type: web
+    name: damask-shop
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: damask-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+    buildFilter:
+      paths:
+        - package.json
+        - package-lock.json
+        - client/**/*
+        - server/**/*
+        - shared/**/*
+        - migrations/**/*
+        - tsconfig.json
+        - vite.config.ts
+    healthCheckPath: /api/health
+
+databases:
+  - name: damask-db
+    databaseName: damask
+    user: damask_user
+    postgresMajorVersion: 15
+
+# Задача для выполнения миграции базы данных
+jobs:
+  - name: migration
+    buildCommand: npm install
+    startCommand: node migrations/run.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: damask-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+
+# Задача для загрузки начальных данных
+  - name: seed
+    buildCommand: npm install
+    startCommand: node migrations/seed.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: damask-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production

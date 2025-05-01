@@ -5,6 +5,10 @@ import { z } from "zod";
 import { availabilityStatuses } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check для Render
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
   // Get all products
   app.get("/api/products", async (req, res) => {
     try {
