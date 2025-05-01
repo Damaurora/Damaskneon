@@ -12,7 +12,10 @@ const __dirname = path.dirname(__filename);
 async function runMigration() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: {
+      rejectUnauthorized: false,
+      require: true
+    }
   });
 
   try {
