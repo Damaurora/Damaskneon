@@ -1,8 +1,9 @@
+
 services:
   - type: web
     name: damask-shop
-    runtime: node
-    buildCommand: npm install --include=dev && npm run build && node migrations/run.js && node migrations/seed.js
+    env: node
+    buildCommand: npm install && npm run build && node migrations/run.js && node migrations/seed.js
     startCommand: NODE_ENV=production node dist/index.js
     envVars:
       - key: NODE_ENV
@@ -11,18 +12,11 @@ services:
         fromDatabase:
           name: damask-db
           property: connectionString
-    headers:
-      - source: "**/*"
-        headers:
-          - key: Cache-Control
-            value: "public, max-age=86400"
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+      - key: SESSION_SECRET
+        generateValue: true
 
 databases:
   - name: damask-db
     databaseName: damask
-    user: damask_user
+    plan: free
     postgresMajorVersion: 15
