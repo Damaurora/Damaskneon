@@ -18,7 +18,9 @@ const pool = new Pool({
   wsProxy: (url) => new ws(url, {
     headers: {
       'host': new URL(process.env.DATABASE_URL).hostname
-    }
+    },
+    rejectUnauthorized: false,
+    timeout: 30000
   })
 });
 
