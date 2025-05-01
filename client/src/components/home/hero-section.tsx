@@ -32,14 +32,18 @@ const HeroSection = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
+              className="relative h-96 flex items-center justify-center"
             >
-              <img 
-                src="https://images.unsplash.com/photo-1561299584-6f43f56bebfe?w=800&auto=format&fit=crop" 
-                alt="Премиальные вейп устройства" 
-                className="rounded-2xl object-cover h-96 w-full"
-              />
-              <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_20px_rgba(255,126,71,0.5)]"></div>
+              <div className="w-full h-full flex items-center justify-center relative overflow-hidden rounded-2xl">
+                <div className="absolute w-full h-full bg-gradient-to-br from-primary/20 to-black/50 rounded-2xl"></div>
+                <div className="z-10 text-center">
+                  <div className="text-4xl font-unbounded font-bold neon-text mb-2">DAMASK</div>
+                  <div className="text-2xl text-white mb-4">Since 2017</div>
+                  <div className="flex justify-center">
+                    <span className="inline-block w-24 h-1 bg-primary neon-border"></span>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
