@@ -43,7 +43,11 @@ app.use((req, res, next) => {
     await initializeDemoData();
     log("Database initialized successfully with demo data");
   } catch (error) {
-    log(`Error initializing database: ${error}`);
+    log(`Error initializing database: ${error?.message || error}`);
+    if (error instanceof Error) {
+      log(`Stack trace: ${error.stack}`);
+    }
+    log(`Database URL: ${process.env.DATABASE_URL?.replace(/:[^:@]*@/, ':****@')}`);
   }
 
   const server = await registerRoutes(app);
