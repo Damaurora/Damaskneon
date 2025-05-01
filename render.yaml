@@ -2,7 +2,7 @@ services:
   - type: web
     name: damask-shop
     runtime: static
-    buildCommand: npm install && npm install --save-dev @vitejs/plugin-react vite esbuild typescript @types/node && npm run build
+    buildCommand: npm install --include=dev && npm run build
     staticPublishPath: ./dist/public
     headers:
       - source: "**/*"
@@ -34,7 +34,6 @@ jobs:
           property: connectionString
       - key: NODE_ENV
         value: production
-
   - name: seed
     buildCommand: npm install
     startCommand: node migrations/seed.js
