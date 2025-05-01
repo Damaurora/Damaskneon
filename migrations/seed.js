@@ -1,5 +1,7 @@
-const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+import pg from 'pg';
+import bcrypt from 'bcrypt';
+
+const { Pool } = pg;
 
 // Функция для загрузки начальных данных
 async function seedDatabase() {
