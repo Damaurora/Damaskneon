@@ -229,9 +229,12 @@ export default function ProductFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto" aria-describedby="product-form-description">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent 
+        className="max-w-xl max-h-[90vh] w-[95%] p-4 sm:p-6 overflow-y-auto rounded-xl sm:rounded-2xl" 
+        aria-describedby="product-form-description"
+      >
+        <DialogHeader className="pb-2 sticky top-0 bg-background z-10">
+          <DialogTitle className="text-xl sm:text-2xl">
             {mode === "create" ? "Добавить новый товар" : "Редактировать товар"}
           </DialogTitle>
           <span id="product-form-description" className="sr-only">
@@ -240,7 +243,7 @@ export default function ProductFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             {/* Основные данные */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
@@ -503,46 +506,50 @@ export default function ProductFormDialog({
 
             {/* Спецификации */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-wrap justify-between items-center">
                 <h3 className="text-lg font-medium">Характеристики</h3>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
+                  className="gap-1"
                   onClick={addSpecField}
                 >
-                  Добавить характеристику
+                  <Plus className="h-4 w-4" /> Добавить
                 </Button>
               </div>
               
-              {specsFields.map((key) => (
-                <div key={key} className="flex gap-2 items-start">
-                  <FormField
-                    control={form.control}
-                    name={`specifications.${key}`}
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input
-                            placeholder="Характеристика товара"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="mt-0.5"
-                    onClick={() => removeSpecField(key)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+              <div className="space-y-3">
+                {specsFields.map((key) => (
+                  <div key={key} className="flex gap-2 items-start">
+                    <FormField
+                      control={form.control}
+                      name={`specifications.${key}`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input
+                              placeholder="Характеристика товара"
+                              className="h-10"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-10 w-10 p-0 flex-shrink-0"
+                      onClick={() => removeSpecField(key)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Комплектация */}
