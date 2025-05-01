@@ -25,7 +25,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newProduct = await storage.createProduct(req.body);
       res.status(201).json(newProduct);
     } catch (error) {
-      res.status(500).json({ message: "Ошибка при создании товара" });
+      console.error('Error creating product:', error);
+      res.status(500).json({ message: `Ошибка при создании товара: ${error.message}` });
     }
   });
 
@@ -74,7 +75,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedProduct = await storage.updateProduct(id, req.body);
       res.json(updatedProduct);
     } catch (error) {
-      res.status(500).json({ message: "Ошибка при обновлении товара" });
+      console.error('Error updating product:', error);
+      res.status(500).json({ message: `Ошибка при обновлении товара: ${error.message}` });
     }
   });
   
