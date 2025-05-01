@@ -8,24 +8,17 @@ const { Pool } = pg;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Функция для запуска миграции
 async function runMigration() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-      require: true
-    }
   });
 
   try {
     console.log('Запуск миграции базы данных...');
     
-    // Чтение SQL файла миграции
     const sqlFile = path.join(__dirname, 'schema.sql');
     const sql = fs.readFileSync(sqlFile, 'utf8');
     
-    // Выполнение SQL-запросов
     await pool.query(sql);
     
     console.log('Миграция успешно завершена');
@@ -37,5 +30,4 @@ async function runMigration() {
   }
 }
 
-// Запуск миграции
 runMigration();
