@@ -14,13 +14,14 @@ const pool = new Pool({
     rejectUnauthorized: false,
     require: true
   },
-  connect_timeout: 30,
+  maxRetries: 3,
+  connectionTimeoutMillis: 10000,
   wsProxy: (url) => new ws(url, {
     headers: {
-      'host': new URL(process.env.DATABASE_URL).hostname
+      host: new URL(process.env.DATABASE_URL).hostname
     },
-    rejectUnauthorized: false,
-    timeout: 30000
+    agent: undefined,
+    rejectUnauthorized: false
   })
 });
 
