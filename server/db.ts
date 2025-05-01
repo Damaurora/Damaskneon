@@ -5,9 +5,7 @@ import ws from 'ws';
 import * as schema from "@shared/schema";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+  throw new Error("DATABASE_URL must be set");
 }
 
 const pool = new Pool({
@@ -16,8 +14,12 @@ const pool = new Pool({
     rejectUnauthorized: false,
     require: true
   },
-  connect_timeout: 10,
-  wsProxy: (url) => new ws(url)
+  connect_timeout: 30,
+  wsProxy: (url) => new ws(url, {
+    headers: {
+      'host': new URL(process.env.DATABASE_URL).hostname
+    }
+  })
 });
 
 export const db = drizzle(pool, { schema });
