@@ -57,7 +57,7 @@ const CatalogSection = () => {
         return (
           product.name.toLowerCase().includes(searchLower) ||
           product.description.toLowerCase().includes(searchLower) ||
-          product.brand?.toLowerCase().includes(searchLower)
+          (product.brand && product.brand.toLowerCase().includes(searchLower))
         );
       })
     : filteredByCategory;

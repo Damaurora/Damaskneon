@@ -78,6 +78,7 @@ export default function ProductFormDialog({
       imageUrl: "",
       customUrl: "",
       category: "pod",
+      brand: "",
       isTopProduct: false,
       isNew: false,
       gagarinAvailability: "outOfStock",
@@ -98,6 +99,7 @@ export default function ProductFormDialog({
         description: product.description,
         imageUrl: product.imageUrl,
         category: product.category,
+        brand: product.brand || "",
         isTopProduct: product.isTopProduct,
         isNew: product.isNew,
         gagarinAvailability: product.gagarinAvailability as string,
@@ -278,6 +280,24 @@ export default function ProductFormDialog({
                         <SelectItem value="accessories">Аксессуары</SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="brand"
+                render={({ field: { value, ...fieldProps } }) => (
+                  <FormItem>
+                    <FormLabel>Бренд</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Бренд товара" 
+                        {...fieldProps} 
+                        value={value || ""} 
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
