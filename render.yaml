@@ -1,9 +1,16 @@
 services:
   - type: web
     name: damask-shop
-    runtime: static
-    buildCommand: npm install --include=dev && npm run build
-    staticPublishPath: ./dist/public
+    runtime: node
+    buildCommand: npm install --include=dev && npm run build && node migrations/run.js && node migrations/seed.js
+    startCommand: NODE_ENV=production node dist/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: damask-db
+          property: connectionString
     headers:
       - source: "**/*"
         headers:
@@ -13,34 +20,9 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
-    envVars:
-      - key: NODE_ENV
-        value: production
 
 databases:
   - name: damask-db
     databaseName: damask
     user: damask_user
     postgresMajorVersion: 15
-
-jobs:
-  - name: migration
-    buildCommand: npm install
-    startCommand: node migrations/run.js
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: damask-db
-          property: connectionString
-      - key: NODE_ENV
-        value: production
-  - name: seed
-    buildCommand: npm install
-    startCommand: node migrations/seed.js
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: damask-db
-          property: connectionString
-      - key: NODE_ENV
-        value: production
