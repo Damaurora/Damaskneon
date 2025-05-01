@@ -31,6 +31,33 @@
    npm run dev
    ```
 
+## Деплой на Render
+
+Проект настроен для деплоя на [Render](https://render.com):
+
+1. Создайте новый репозиторий и загрузите в него код проекта
+2. В Render создайте новый Web Service, связанный с вашим репозиторием
+3. В настройках Web Service:
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm run start`
+   - Environment Variables:
+     - `NODE_ENV`: production
+     - `DATABASE_URL`: (URL вашей PostgreSQL базы)
+     - `SESSION_SECRET`: (случайная строка для шифрования сессий)
+
+Render автоматически выполнит настройку и запуск приложения.
+
+### Автоматический деплой с использованием render.yaml
+
+Для более простого деплоя вы можете использовать Blueprint из файла `render.yaml`:
+
+1. Нажмите на кнопку "Deploy to Render" в вашем репозитории
+2. Render создаст все необходимые сервисы автоматически:
+   - Web Service для приложения
+   - PostgreSQL базу данных
+   - Задачу для миграции базы данных
+   - Задачу для загрузки начальных данных
+
 ## Структура базы данных
 
 Схема базы данных находится в `shared/schema.ts`. Миграционные скрипты в папке `migrations`.
